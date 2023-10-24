@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Created Dockets List{% endblock %}
+
+{% block created_dockets_active %}active{% endblock %}
+
+{% block content %}
+    <h2>Created Dockets</h2>
+    <table class="table table-striped custom-table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Hours Worked</th>
+                <th>Rate Per Hour</th>
+                <th>Supplier</th>
+                <th>Purchase Order</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for created_docket in created_dockets %}
+                <tr>
+                    <td>{{ created_docket.name }}</td>
+                    <td>{{ created_docket.start_time }}</td>
+                    <td>{{ created_docket.end_time }}</td>
+                    <td>{{ created_docket.hours_worked }}</td>
+                    <td>{{ created_docket.rate_per_hour }}</td>
+                    <td>{{ created_docket.supplier }}</td>
+                    <td>{{ created_docket.purchase_order }}</td>
+                    <td>
+                        {% for docket in created_docket.purchase_order.dockets %}
+                            {{ docket.description }}<br>
+                        {% empty %}
+                            No description available.
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No created dockets available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

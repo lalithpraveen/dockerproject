@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Docket Entry{% endblock %}
+
+{% block create_docket_entry_active %}active{% endblock %}
+
+{% block content %}
+    <h2>Create Docket Entry</h2>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-group">
+            <div id="purchase-order-description" class="mt-2"></div>
+        </div>
+        <input type="submit" value="Create Docket Entry" class="btn btn-primary">
+    </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+        // Initialize DateTimePicker for start_time and end_time fields
+        $(document).ready(function(){
+            $('#id_start_time').datetimepicker({
+                format: 'YYYY-MM-DDTHH:mm:ss',
+                useCurrent: false,
+                sideBySide: true
+            });
+
+
+            $('#id_end_time').datetimepicker({
+                format: 'YYYY-MM-DDTHH:mm:ss',
+                useCurrent: false,
+                sideBySide: true
+            });
+        });
+    </script>
+<script>
+    $(document).ready(function() {
+
+    $('#id_supplier').change(function() {
+        var supplierId = $(this).val();
+        $.ajax({
+            url: '/get_purchase_orders/',
+            data: {'supplier_id': supplierId},
+            dataType: 'json',
+            success: function(data) {
+                $('#id_purchase_order').empty();
+                $('#id_purchase_order').append($('<option>', {
+        value: '----------',
+        text: '----------'
+    }));
+                $.each(data.purchase_orders, function(index, po) {
+                    $('#id_purchase_order').append($('<option>', {
+                        value: po.id,
+                        text: po.name
+                    }));
+                });
+            }
+        });
+    });
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $('#id_purchase_order').change(function() {
+        var purchaseOrderId = $(this).val();
+        if (purchaseOrderId !== '----------') {
+                $.ajax({
+                    url: '/get_purchase_order_description/',
+                    data: {'purchase_order_id': purchaseOrderId},
+                    dataType: 'json',
+                    success: function(data) {
+                        var descriptionHtml = '';
+                        $.each(data.descriptions, function(index, description) {
+                            descriptionHtml += '<p>' + description + '</p>';
+                        });
+                        $('#purchase-order-description').html(descriptionHtml);
+                    }
+                });
+            } else {
+                $('#purchase-order-description').html('');  // Clear description if the default dash is selected
+            }
+    });
+});
+
+</script>
+
+{% endblock %}

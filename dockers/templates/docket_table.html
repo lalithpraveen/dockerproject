@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Docket List{% endblock %}
+
+{% block docket_list_active %}active{% endblock %}
+
+{% block content %}
+    <h1>Uploaded Docket Data</h1>
+<a class="nav-link" href="{% url 'create_docket_entry' %}">
+    <button type="button" class="btn btn-primary">
+        Create New Docket Entry
+    </button></a>
+       <table class="table table-striped custom-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>PO Number</th>
+                    <th>Order Date</th>
+                    <th>Buyer</th>
+                    <th>Supplier</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for docket in dockets %}
+                <tr>
+                    <td>{{ docket.po_number }}</td>
+                    <td>{{ docket.order_date }}</td>
+                    <td>{{ docket.buyer }}</td>
+                    <td>{{ docket.supplier }}</td>
+                    <td>{{ docket.description }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No docket data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+<!-- Pagination controls -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span class="current">
+        Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+    </span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ paginator.num_pages }}">Last</a>
+    {% endif %}
+    </div>
+{% endblock %}
